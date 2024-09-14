@@ -31,6 +31,11 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
+            - name: RAZORPAY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: razorpay-secret
+                  key: RAZORPAY_SECRET                  
 ---
 apiVersion: v1
 kind: Service
