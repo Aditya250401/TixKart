@@ -25,7 +25,7 @@ router.post(
 
 		const existingUser = await User.findOne({ email })
 		if (!existingUser) {
-			throw new BadRequestError('Invalid credentials')
+			throw new BadRequestError('Invalid user details')
 		}
 
 		const passwordsMatch = await Password.compare(
