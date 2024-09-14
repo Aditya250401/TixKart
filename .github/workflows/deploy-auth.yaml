@@ -27,5 +27,5 @@ jobs:
         GOOGLE_PROJECT: ticketing-dev-250401
       run: |
         gcloud auth configure-docker us-central1-docker.pkg.dev
-        docker build -t us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart-auth .
+        docker build -t us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart-auth ./auth
         docker push us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart-auth:latest
