@@ -1,11 +1,10 @@
-
 import express, { Request, Response } from 'express'
 import { body } from 'express-validator'
 import jwt from 'jsonwebtoken'
 
 import { Password } from '../services/password'
 import { User } from '../models/user'
-import { validateRequest,BadRequestError } from '@aditya250401/common'
+import { validateRequest, BadRequestError } from '@aditya250401/common'
 
 const router = express.Router()
 
@@ -17,7 +16,6 @@ router.post(
 			.trim()
 			.notEmpty()
 			.withMessage('You must supply a password'),
-
 	],
 	validateRequest,
 	async (req: Request, res: Response) => {
@@ -33,7 +31,7 @@ router.post(
 			password
 		)
 		if (!passwordsMatch) {
-			throw new BadRequestError('Invalid Credentials of user')
+			throw new BadRequestError('Invalid Credentials')
 		}
 
 		// Generate JWT
@@ -55,4 +53,3 @@ router.post(
 )
 
 export { router as signinRouter }
-
