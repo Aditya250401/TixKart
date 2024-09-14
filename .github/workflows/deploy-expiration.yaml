@@ -1,0 +1,34 @@
+name: deploy-expiration
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'expiration/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: code checkout
+        uses: actions/checkout@v2
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
+
+      - name: install the gcloud cli
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ticketing-dev-250401
+          install_components: 'gke-gcloud-auth-plugin'
+
+      - name: build and push the docker image
+        env:
+          GOOGLE_PROJECT: ticketing-dev-250401
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev
+          docker build -t us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-expiration ./expiration
+          docker push us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-expiration:latest

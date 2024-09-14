@@ -39,7 +39,7 @@ router.post(
 		}
 
 		if (order.status === OrderStatus.Cancelled) {
-			throw new BadRequestError('Cannot pay for a cancelled order')
+			throw new BadRequestError('Cannot pay for a cancelled order try again')
 		}
 
 		const amount = order.price * 100 // Amount in paise

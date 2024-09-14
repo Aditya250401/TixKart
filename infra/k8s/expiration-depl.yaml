@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: expiration
-          image: aditya250401/ticketing-expiration
+          image: us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-expiration
           env:
             - name: NATS_CLIENT_ID
               valueFrom:

@@ -5,7 +5,7 @@ import {
 	NotFoundError,
 	requireAuth,
 	NotAuthorizedError,
-	BadRequestError
+	BadRequestError,
 } from '@aditya250401/common'
 import { Ticket } from '../models/ticket'
 
@@ -36,7 +36,7 @@ router.put(
 		}
 
 		if (ticket.orderId) {
-			throw new BadRequestError('Cannot edit a reserved ticket')
+			throw new BadRequestError('ticket is reserved')
 		}
 
 		ticket.set({
@@ -44,15 +44,14 @@ router.put(
 			price: req.body.price,
 		})
 		await ticket.save()
-		
-    new TicketUpdatedPublisher(natsWrapper.client).publish({
+
+		new TicketUpdatedPublisher(natsWrapper.client).publish({
 			id: ticket.id,
 			title: ticket.title,
 			price: ticket.price,
 			userId: ticket.userId,
 			version: ticket.version,
 		})
-
 
 		res.send(ticket)
 	}

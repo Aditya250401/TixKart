@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: aditya250401/ticketing-auth
+          image: us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-auth
           env:
             - name: MONGO_URI
               value: 'mongodb://auth-mongo-srv:27017/auth'

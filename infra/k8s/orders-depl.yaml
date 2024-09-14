@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: orders
-          image: aditya250401/ticketing-orders
+          image: us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-orders
           env:
             - name: NATS_CLIENT_ID
               valueFrom:

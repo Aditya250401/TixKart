@@ -35,7 +35,7 @@ router.post(
 			.not()
 			.isEmpty() // Ensure 'ticketId' is not empty
 			.custom((input: string) => mongoose.Types.ObjectId.isValid(input)) // Check if 'ticketId' is a valid MongoDB ObjectId
-			.withMessage('TicketId must be provided'), // Custom error message for invalid ticketId
+			.withMessage('TicketId must be provided with valid entries'), // Custom error message for invalid ticketId
 	],
 	validateRequest, // Middleware to handle validation errors if any of the above validation fails
 	async (req: Request, res: Response) => {

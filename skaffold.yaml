@@ -8,7 +8,7 @@ build:
   local:
     push: false
   artifacts:
-    - image: aditya250401/ticketing-auth
+    - image: us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-auth
       context: auth
       docker:
         dockerfile: Dockerfile
@@ -16,7 +16,7 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: aditya250401/ticketing-client
+    - image: us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-client
       context: client
       docker:
         dockerfile: Dockerfile
@@ -24,7 +24,7 @@ build:
         manual:
           - src: '**/*.js'
             dest: .
-    - image: aditya250401/ticketing-tickets
+    - image: us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-tickets
       context: tickets
       docker:
         dockerfile: Dockerfile
@@ -32,7 +32,7 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: aditya250401/ticketing-orders
+    - image: us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-orders
       context: orders
       docker:
         dockerfile: Dockerfile
@@ -40,7 +40,7 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: aditya250401/ticketing-expiration
+    - image: us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-expiration
       context: expiration
       docker:
         dockerfile: Dockerfile
@@ -48,7 +48,7 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: aditya250401/ticketing-payments
+    - image: us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-payments
       context: payments
       docker:
         dockerfile: Dockerfile

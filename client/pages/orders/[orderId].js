@@ -106,7 +106,7 @@ const OrderShow = ({ order, currentUser }) => {
 
 	return (
 		<div>
-			<p>Time left to pay: {timeLeft} seconds</p>
+			<p>Time left to pay remaining amount: {timeLeft} seconds</p>
 			<button onClick={handleCreateOrder}>Pay with Razorpay</button>
 		</div>
 	)
