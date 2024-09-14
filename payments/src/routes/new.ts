@@ -9,9 +9,6 @@ import {
 	OrderStatus,
 } from '@aditya250401/common'
 import { Order } from '../models/order'
-import { Payment } from '../models/payment'
-import { PaymentCreatedPublisher } from '../events/publishers/payment-created-publisher'
-import { natsWrapper } from '../nats-wrapper'
 import Razorpay from 'razorpay'
 
 const router = express.Router()
@@ -30,7 +27,8 @@ router.post(
 		const { orderId } = req.body
 
 		const order = await Order.findById(orderId)
-		console.log('order recieved', order)
+
+
 
 		if (!order) {
 			throw new NotFoundError()
@@ -54,20 +52,6 @@ router.post(
 			receipt: receiptId,
 		})
 
-		const payment = Payment.build({
-			orderId,
-			stripeId: paymentOrder.id,
-		})
-
-		console.log('this is the payment', payment)
-
-		await payment.save()
-
-		new PaymentCreatedPublisher(natsWrapper.client).publish({
-			id: payment.id,
-			orderId: payment.orderId,
-			stripeId: payment.stripeId,
-		})
 
 		res.status(201).send({
 			amount,

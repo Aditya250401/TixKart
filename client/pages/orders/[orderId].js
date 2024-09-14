@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import Router from 'next/router'
 
 const OrderShow = ({ order, currentUser }) => {
 	const [timeLeft, setTimeLeft] = useState(0)
@@ -27,6 +28,7 @@ const OrderShow = ({ order, currentUser }) => {
 	const handleCreateOrder = async () => {
 		try {
 			const { data } = await axios.post('/api/payments', { orderId: order.id })
+			console.log('data mil gaya', data)
 			setOrderDetails({
 				orderId: data.razorpayOrderId,
 				currency: 'INR',
@@ -62,17 +64,17 @@ const OrderShow = ({ order, currentUser }) => {
 			description: 'Payment for your order',
 			order_id: orderDetails.orderId, // Razorpay Order ID
 			handler: async function (response) {
-				console.log(response)
-
 				const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
 					response
 				try {
 					await axios.post('/api/payments/verify', {
-						orderId: orderDetails.orderId,
+						orderId: order.id,
 						paymentId: razorpay_payment_id,
 						signature: razorpay_signature,
+						razorpay_order_id,
 					})
 					alert('Payment Successful!')
+					Router.push('/orders')
 				} catch (error) {
 					console.error('Payment verification failed:', error)
 					alert('Payment verification failed.')
@@ -81,7 +83,7 @@ const OrderShow = ({ order, currentUser }) => {
 			prefill: {
 				name: currentUser.name,
 				email: currentUser.email,
-				contact: '9000090000', // Provide a contact number
+				contact: '8918060957', // Provide a contact number
 			},
 			theme: {
 				color: '#3399cc',

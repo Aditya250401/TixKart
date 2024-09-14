@@ -4,6 +4,7 @@ import { json } from 'body-parser'
 import cookieSession from 'cookie-session'
 import { errorHandler, NotFoundError, currentUser } from '@aditya250401/common'
 import { createChargeRouter } from './routes/new'
+import { verifyChargeRouter } from './routes/verify'
 
 const app = express()
 app.set('trust proxy', true)
@@ -17,6 +18,7 @@ app.use(
 app.use(currentUser)
 
 app.use(createChargeRouter)
+app.use(verifyChargeRouter)
 
 app.all('*', async (req, res) => {
 	throw new NotFoundError()
