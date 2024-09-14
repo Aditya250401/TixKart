@@ -15,7 +15,7 @@ const router = express.Router()
 
 const razorpay = new Razorpay({
 	key_id: 'rzp_test_XKTJYBPsUb9pgK',
-	key_secret: 'pVNItRkQiMU3aXFvheKUuZ6b',
+	key_secret: process.env.RAZORPAY_SECRET,
 })
 
 router.post(

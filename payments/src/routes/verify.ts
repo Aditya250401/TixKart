@@ -16,7 +16,7 @@ import crypto from 'crypto'
 
 const router = express.Router()
 
-const razorpayKeySecret = 'pVNItRkQiMU3aXFvheKUuZ6b' // Use your actual Razorpay key secret here
+const razorpayKeySecret = process.env.RAZORPAY_SECRET! // Use your actual Razorpay key secret here
 
 router.post(
 	'/api/payments/verify',
