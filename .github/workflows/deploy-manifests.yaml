@@ -30,7 +30,4 @@ jobs:
           gcloud container clusters get-credentials ticketing-dev --zone us-central1-c --project ticketing-dev-250401
           kubectl apply -f infra/k8s && kubectl apply -f infra/k8s-prod
 
-      - name: Force Restart All Deployments
-        run: |-
-          kubectl get deployments -o name | xargs -n 1 kubectl rollout restart
  
