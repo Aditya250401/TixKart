@@ -9,7 +9,11 @@ export default ({ url, method, body, onSuccess }) => {
 			setErrors(null) // Reset errors before making the request
 
 			// Make the API call with axios
-			const response = await axios[method](url, { ...body, ...props })
+			const response = await axios[method](
+				url,
+				{ ...body, ...props },
+				{ withCredentials: 'true' }
+			)
 			console.log(response, 'response from', url) // Log the response for debugging
 
 			// Call the onSuccess callback if it exists
