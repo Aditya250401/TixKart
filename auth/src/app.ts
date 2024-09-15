@@ -16,7 +16,8 @@ app.use(
 	cookieSession({
 		signed: false,
 		secure: false, // This must be false in production if you're using HTTP
-		sameSite: 'none', // Or 'none' if you're doing cross-domain requests
+		sameSite: 'none', 
+		domain: 'http://tixkart.bigbeardevs.tech'// Or 'none' if you're doing cross-domain requests
 	})
 )
 
