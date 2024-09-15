@@ -4,7 +4,6 @@ import { json } from 'body-parser'
 import cookieSession from 'cookie-session'
 import cors from 'cors'
 
-
 import { currentUserRouter } from './routes/current-user'
 import { signinRouter } from './routes/signin'
 import { signoutRouter } from './routes/signout'
@@ -17,8 +16,8 @@ app.use(json())
 app.use(
 	cookieSession({
 		signed: false,
-		secure: process.env.NODE_ENV !== 'test',
-		domain: 'tixkart.bigbeardevs.tech',
+		secure: false, // This must be false in production if you're using HTTP
+		sameSite: 'lax', // Or 'none' if you're doing cross-domain requests
 	})
 )
 
