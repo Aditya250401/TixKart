@@ -2,7 +2,6 @@ import express from 'express'
 import 'express-async-errors'
 import { json } from 'body-parser'
 import cookieSession from 'cookie-session'
-import cors from 'cors'
 
 import { currentUserRouter } from './routes/current-user'
 import { signinRouter } from './routes/signin'
@@ -17,14 +16,7 @@ app.use(
 	cookieSession({
 		signed: false,
 		secure: false, // This must be false in production if you're using HTTP
-		sameSite: 'lax', // Or 'none' if you're doing cross-domain requests
-	})
-)
-
-app.use(
-	cors({
-		origin: 'http://tixkart.bigbeardevs.tech',
-		credentials: true,
+		sameSite: 'none', // Or 'none' if you're doing cross-domain requests
 	})
 )
 

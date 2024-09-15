@@ -17,7 +17,7 @@ jobs:
           credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_INFRA }}'
 
       - name: install the gcloud cli
-        uses: google-github-actions/setup-gcloud@v0
+        uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ticketing-dev-250401
           install_components: 'gke-gcloud-auth-plugin'
