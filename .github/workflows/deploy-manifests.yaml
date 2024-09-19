@@ -5,30 +5,40 @@ on:
     branches:
       - main
 
+
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v1'
+      - uses: digitalocean/action-doctl@v2
         with:
-          credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_INFRA }}'
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - run: doctl kubernetes cluster kubeconfig save ticketing
+      - run: kubectl apply -f infra/k8s && kubectl apply -f infra/k8s-prod
 
-      - name: install the gcloud cli
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ticketing-dev-250401
-          install_components: 'gke-gcloud-auth-plugin'
-          export_default_credentials: true
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
 
+#       - id: 'auth'
+#         uses: 'google-github-actions/auth@v1'
+#         with:
+#           credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_INFRA }}'
 
+#       - name: install the gcloud cli
+#         uses: google-github-actions/setup-gcloud@v2
+#         with:
+#           project_id: ticketing-dev-250401
+#           install_components: 'gke-gcloud-auth-plugin'
 
-      - name: Apply
-        run: |-
-          gcloud container clusters get-credentials ticketing-dev --zone us-central1-c --project ticketing-dev-250401
-          kubectl delete -f infra/k8s && kubectl delete -f infra/k8s-prod
-          kubectl apply -f infra/k8s && kubectl apply -f infra/k8s-prod
+#       - name: Apply
+#         run: |-
+#           gcloud container clusters get-credentials ticketing-dev --zone us-central1-c --project ticketing-dev-250401
+#           kubectl delete -f infra/k8s && kubectl delete -f infra/k8s-prod
+#           kubectl apply -f infra/k8s && kubectl apply -f infra/k8s-prod
 
  

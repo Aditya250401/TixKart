@@ -4,31 +4,45 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'tickets/**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: code checkout
-        uses: actions/checkout@v2
-
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v1'
-        with:
-          credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
-
-      - name: install the gcloud cli
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ticketing-dev-250401
-          install_components: 'gke-gcloud-auth-plugin'
-
-      - name: build and push the docker image
+      - uses: actions/checkout@v3
+      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
         env:
-          GOOGLE_PROJECT: ticketing-dev-250401
-        run: |
-          gcloud auth configure-docker us-central1-docker.pkg.dev
-          docker build -t us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-tickets ./tickets
-          docker push us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-tickets:latest
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - run: cd tickets && docker build -t aditya250401/ticketing-tickets .
+      - run: docker push aditya250401/ticketing-tickets
+      - uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - run: doctl kubernetes cluster kubeconfig save ticketing
+      - run: kubectl rollout restart deployment tickets-depl
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: code checkout
+#         uses: actions/checkout@v2
+
+#       - id: 'auth'
+#         uses: 'google-github-actions/auth@v1'
+#         with:
+#           credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
+
+#       - name: install the gcloud cli
+#         uses: google-github-actions/setup-gcloud@v2
+#         with:
+#           project_id: ticketing-dev-250401
+#           install_components: 'gke-gcloud-auth-plugin'
+
+#       - name: build and push the docker image
+#         env:
+#           GOOGLE_PROJECT: ticketing-dev-250401
+#         run: |
+#           gcloud auth configure-docker us-central1-docker.pkg.dev
+#           docker build -t us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-tickets ./tickets
+#           docker push us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-tickets:latest
