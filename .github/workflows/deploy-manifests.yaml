@@ -5,8 +5,6 @@ on:
     branches:
       - main
 
-
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,9 +13,8 @@ jobs:
       - uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      - run: doctl kubernetes cluster kubeconfig save ticketing
+      - run: doctl kubernetes cluster kubeconfig save tixkart-bigbeardevs
       - run: kubectl apply -f infra/k8s && kubectl apply -f infra/k8s-prod
-
 # jobs:
 #   build:
 #     runs-on: ubuntu-latest
@@ -41,4 +38,3 @@ jobs:
 #           kubectl delete -f infra/k8s && kubectl delete -f infra/k8s-prod
 #           kubectl apply -f infra/k8s && kubectl apply -f infra/k8s-prod
 
- 
