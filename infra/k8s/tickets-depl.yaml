@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: tickets
-          image: aditya250401-ticketing-tickets
+          image: aditya250401/ticketing-tickets
           env:
             - name: NATS_CLIENT_ID
               valueFrom:
