@@ -7,7 +7,6 @@ on:
     paths:
       - 'client/**'
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -47,5 +46,5 @@ jobs:
 #           GOOGLE_PROJECT: ticketing-dev-250401
 #         run: |
 #           gcloud auth configure-docker us-central1-docker.pkg.dev
-#           docker build -t us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-client ./client
-#           docker push us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-client:latest
+#           docker build -t aditya250401-ticketing-client ./client
+#           docker push aditya250401-ticketing-client:latest

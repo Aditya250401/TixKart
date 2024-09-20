@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: client
-          image: us-central1-docker.pkg.dev/ticketing-dev-250401/tixkart/aditya250401-ticketing-client
+          image: aditya250401-ticketing-client
 ---
 apiVersion: v1
 kind: Service
