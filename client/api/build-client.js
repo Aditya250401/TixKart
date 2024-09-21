@@ -5,7 +5,7 @@ export default ({ req }) => {
 		// We are on the server
 
 		return axios.create({
-			baseURL: 'http://tixkartmain.bigbeardevs.tech',
+			baseURL: 'http://tickart.bigbeardevs.tech',
 			headers: req.headers,
 		})
 	} else {

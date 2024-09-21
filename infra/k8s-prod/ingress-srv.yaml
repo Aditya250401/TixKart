@@ -11,7 +11,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: tixkartmain.bigbeardevs.tech
+    - host: tickartmain.bigbeardevs.tech
       http:
         paths:
           - path: /api/payments/?(.*)
@@ -55,7 +55,7 @@ kind: Service
 metadata:
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: 'false'
-    service.beta.kubernetes.io/do-loadbalancer-hostname: tixkart.bigbeardevs.tech
+    service.beta.kubernetes.io/do-loadbalancer-hostname: tickart.bigbeardevs.tech
   labels:
     helm.sh/chart: ingress-nginx-2.0.3
     app.kubernetes.io/name: ingress-nginx
