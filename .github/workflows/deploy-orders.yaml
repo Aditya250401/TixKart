@@ -21,7 +21,7 @@ jobs:
       - uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      - run: doctl kubernetes cluster kubeconfig save tixkart-bigbeardevs
+      - run: doctl kubernetes cluster kubeconfig save 3efb1cda-3603-47c4-bb48-7c7aef673b04
       - run: kubectl rollout restart deployment orders-depl
 # jobs:
 #   build:
