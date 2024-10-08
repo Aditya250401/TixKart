@@ -4,11 +4,12 @@ deploy:
   kubectl:
     manifests:
       - ./infra/k8s/*
+      - ./infra/k8s-dev/*
 build:
   local:
     push: false
   artifacts:
-    - image: aditya250401-ticketing-auth
+    - image: aditya250401/ticketing-auth
       context: auth
       docker:
         dockerfile: Dockerfile
@@ -16,15 +17,15 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: aditya250401-ticketing-client
-      context: client
+    - image: aditya250401/ticketing-client-client2
+      context: client2
       docker:
         dockerfile: Dockerfile
       sync:
         manual:
           - src: '**/*.js'
             dest: .
-    - image: aditya250401-ticketing-tickets
+    - image: aditya250401/ticketing-tickets
       context: tickets
       docker:
         dockerfile: Dockerfile
@@ -32,7 +33,7 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: aditya250401-ticketing-orders
+    - image: aditya250401/ticketing-orders
       context: orders
       docker:
         dockerfile: Dockerfile
@@ -40,7 +41,7 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: aditya250401-ticketing-expiration
+    - image: aditya250401/ticketing-expiration
       context: expiration
       docker:
         dockerfile: Dockerfile
@@ -48,7 +49,7 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: aditya250401-ticketing-payments
+    - image: aditya250401/ticketing-payments
       context: payments
       docker:
         dockerfile: Dockerfile

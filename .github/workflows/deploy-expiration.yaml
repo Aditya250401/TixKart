@@ -17,11 +17,11 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - run: cd expiration && docker build -t aditya250401/ticketing-expiration .
       - run: docker push aditya250401/ticketing-expiration
-#       - uses: digitalocean/action-doctl@v2
-#         with:
-#           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-#       - run: doctl kubernetes cluster kubeconfig save tixkart-bigbeardevs
-#       - run: kubectl rollout restart deployment expiration-depl
+      - uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - run: doctl kubernetes cluster kubeconfig save tixkart-bigbeardevs
+      - run: kubectl rollout restart deployment expiration-depl
 # # jobs:
 #   build:
 #     runs-on: ubuntu-latest

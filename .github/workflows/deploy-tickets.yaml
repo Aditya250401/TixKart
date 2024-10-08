@@ -18,11 +18,11 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - run: cd tickets && docker build -t aditya250401/ticketing-tickets .
       - run: docker push aditya250401/ticketing-tickets
-      # - uses: digitalocean/action-doctl@v2
-      #   with:
-      #     token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      # - run: doctl kubernetes cluster kubeconfig save tixkart-bigbeardevs
-      # - run: kubectl rollout restart deployment tickets-depl
+      - uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - run: doctl kubernetes cluster kubeconfig save tixkart-bigbeardevs
+      - run: kubectl rollout restart deployment tickets-depl
 # jobs:
 #   build:
 #     runs-on: ubuntu-latest

@@ -18,11 +18,11 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - run: cd payments && docker build -t aditya250401/ticketing-payments .
       - run: docker push aditya250401/ticketing-payments
-#       - uses: digitalocean/action-doctl@v2
-#         with:
-#           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-#       - run: doctl kubernetes cluster kubeconfig save tixkart-bigbeardevs
-#       - run: kubectl rollout restart deployment payments-depl
+      - uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - run: doctl kubernetes cluster kubeconfig save tixkart-bigbeardevs
+      - run: kubectl rollout restart deployment payments-depl
 # # jobs:
 #   build:
 #     runs-on: ubuntu-latest
