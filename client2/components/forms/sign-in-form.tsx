@@ -49,6 +49,7 @@ export default function SignInForm() {
 			toast({
 				title: 'login successful',
 				description: `welcome ${results.data.email}`,
+				variant: 'success',
 			})
 			dispatch(setCredentials({ user: results.data }))
 			redirect('/')
@@ -58,6 +59,7 @@ export default function SignInForm() {
 			toast({
 				title: 'login failed',
 				description: `${results.error.data.message}`,
+				variant: 'destructive',
 			})
 		}
 	}, [results])

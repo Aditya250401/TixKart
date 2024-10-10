@@ -60,4 +60,27 @@ router.post(
 	}
 )
 
+router.post(
+	'/api/payments/orders',
+	requireAuth,
+	async (req: Request, res: Response) => {
+		const userId = req.currentUser!.id
+
+		// Find all orders for the user
+		const orders = await Order.find({ userId })
+
+		if (!orders || orders.length === 0) {
+			throw new NotFoundError()
+		}
+
+		// Calculate total amount for all orders
+		const totalAmount = orders.reduce((acc, order) => acc + order.price, 0)
+
+		res.status(200).send({
+			orders,
+			totalAmount,
+		})
+	}
+)
+
 export { router as createChargeRouter }

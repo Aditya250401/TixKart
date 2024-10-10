@@ -47,6 +47,7 @@ const SignUpForm = () => {
 			toast({
 				title: 'signup successful',
 				description: `welcome ${results.data.email}`,
+				variant: 'success',
 			})
 			dispatch(setCredentials({ user: results.data }))
 			redirect('/')
@@ -56,6 +57,7 @@ const SignUpForm = () => {
 			toast({
 				title: 'signup failed',
 				description: `${results.error.data.message}`,
+				variant: 'destructive',
 			})
 		}
 	}, [results])
@@ -108,7 +110,7 @@ const SignUpForm = () => {
 						)}
 					/>
 
-					<Button type="submit" className="shad-primary-btn w-full">
+					<Button type="submit" className="bg-white text-black">
 						Sign-up
 					</Button>
 				</form>
