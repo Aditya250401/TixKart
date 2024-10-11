@@ -1,17 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+// import { useState } from 'react'
+import { useEffect } from 'react'
+import { redirect } from 'next/navigation'
+import { toast } from '@/hooks/use-toast'
 import Image from 'next/image'
-import {
-	Calendar,
-	Clock,
-	MapPin,
-	Info,
-	Plus,
-	Minus,
-	Ticket,
-} from 'lucide-react'
-
+import { Calendar, Clock, MapPin, Info, Ticket } from 'lucide-react'
+// import { plus , Minus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -21,22 +16,52 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { useGetTicketByIdQuery } from '@/lib/redux/store'
+import {
+	useGetTicketByIdQuery,
+	useCreateOrderMutation,
+} from '@/lib/redux/store'
 
 interface PostShowPageProps {
 	params: {
-         ticketId: string
+		ticketId: string
 	}
 }
 
 export default function Component({ params }: PostShowPageProps) {
-
 	const { ticketId } = params
-
 
 	const { data } = useGetTicketByIdQuery(ticketId as string)
 
-	const [quantity, setQuantity] = useState(1)
+	const [createOrder, results] = useCreateOrderMutation()
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault()
+
+		await createOrder({ ticketId }).unwrap() // Unwrap to handle errors
+	}
+
+	useEffect(() => {
+		if (results.isSuccess) {
+			const time = new Date(results.data.expiresAt).toLocaleTimeString()
+			toast({
+				title: 'order created succesfull',
+				description: `the order will expire at ${time}`,
+				variant: 'success',
+			})
+
+			redirect('/cart')
+		}
+		console.log('these are order created', results)
+		if (results.isError) {
+			toast({
+				title: 'order creation failed',
+				description: `${results.error.data.message}`,
+				variant: 'destructive',
+			})
+		}
+	}, [results])
+
+	// const [quantity, setQuantity] = useState(1)
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-gray-100 flex flex-col items-center justify-start p-4 relative overflow-hidden">
@@ -142,7 +167,7 @@ export default function Component({ params }: PostShowPageProps) {
 							</div>
 							<div className="flex items-center justify-between">
 								<span className="text-xl text-gray-300">Quantity</span>
-								<div className="flex items-center bg-gray-700/50 rounded-full">
+								{/* <div className="flex items-center bg-gray-700/50 rounded-full">
 									<Button
 										variant="ghost"
 										size="icon"
@@ -162,7 +187,7 @@ export default function Component({ params }: PostShowPageProps) {
 									>
 										<Plus className="h-4 w-4" />
 									</Button>
-								</div>
+								</div> */}
 							</div>
 							<Separator className="my-4 bg-gray-600" />
 							<div className="flex justify-between items-center">
@@ -170,15 +195,16 @@ export default function Component({ params }: PostShowPageProps) {
 									Total
 								</span>
 								<span className="text-3xl font-bold text-teal-300">
-									${(129.99 * quantity).toFixed(2)}
+									{data?.price}
 								</span>
 							</div>
 							<Button
 								className="w-full bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white text-lg py-6 rounded-full transition-all duration-300 transform hover:scale-105"
 								size="lg"
+								onClick={handleSubmit}
 							>
 								<Ticket className="mr-2 h-5 w-5" />
-								Place Order
+								Add to Cart
 							</Button>
 							<TooltipProvider>
 								<Tooltip>

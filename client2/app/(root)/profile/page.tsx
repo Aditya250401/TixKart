@@ -1,74 +1,30 @@
 'use client'
 
-import { useState } from 'react'
-import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CalendarIcon, MapPinIcon, TicketIcon, StarIcon } from 'lucide-react'
+import {
+	useGetCompletedOrdersQuery,
+	useGetUserTicketsQuery,
+	useGetUserQuery,
+} from '@/lib/redux/store'
 
 export default function UserProfilePage() {
-	const [activeTab, setActiveTab] = useState('upcoming')
+	const { data: mainUser } = useGetUserQuery()
+	const { data: userCreatedTicketsData } = useGetUserTicketsQuery()
+	const { data: userBoughtOrdersData } = useGetCompletedOrdersQuery()
 
 	const user = {
-		name: 'Alex Johnson',
 		username: '@alexj',
 		bio: 'Event enthusiast | Music lover | Always ready for the next big show',
 		location: 'New York, NY',
 		memberSince: 'January 2022',
-		eventsAttended: 37,
+		eventsAttended: userBoughtOrdersData?.length || 0,
 		avatar: '/placeholder.svg',
 	}
-
-	const upcomingEvents = [
-		{
-			id: 1,
-			name: 'Cosmic Symphony',
-			date: '2024-08-15',
-			venue: 'Stellar Hall',
-			ticketType: 'VIP',
-		},
-		{
-			id: 2,
-			name: 'Rock the Universe',
-			date: '2024-09-22',
-			venue: 'Galaxy Arena',
-			ticketType: 'General',
-		},
-		{
-			id: 3,
-			name: 'Jazz Under the Stars',
-			date: '2024-10-05',
-			venue: 'Moonlight Garden',
-			ticketType: 'Premium',
-		},
-	]
-
-	const pastEvents = [
-		{
-			id: 4,
-			name: 'Electronica Fest',
-			date: '2024-05-10',
-			venue: 'Neon Stadium',
-			ticketType: 'VIP',
-		},
-		{
-			id: 5,
-			name: 'Classical Nights',
-			date: '2024-06-18',
-			venue: 'Harmony Theater',
-			ticketType: 'General',
-		},
-		{
-			id: 6,
-			name: 'Summer Vibes Concert',
-			date: '2024-07-03',
-			venue: 'Beachside Arena',
-			ticketType: 'Premium',
-		},
-	]
 
 	return (
 		<div className="min-h-screen bg-[#0a0a0a] text-gray-100 p-4 md:p-8 lg:p-12">
@@ -77,11 +33,18 @@ export default function UserProfilePage() {
 					<div className="flex flex-col md:flex-row md:items-center md:justify-between">
 						<div className="flex items-center space-x-4">
 							<Avatar className="w-20 h-20 border-2 border-white/20">
-								<AvatarImage src={user.avatar} alt={user.name} />
-								<AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+								<AvatarImage
+									src={user.avatar}
+									alt={mainUser?.currentUser.email}
+								/>
+								<AvatarFallback>
+									{mainUser?.currentUser.email.charAt(0)}
+								</AvatarFallback>
 							</Avatar>
 							<div>
-								<h1 className="text-2xl font-bold text-white">{user.name}</h1>
+								<h1 className="text-2xl font-bold text-white">
+									{mainUser?.currentUser.email}
+								</h1>
 								<p className="text-gray-400">{user.username}</p>
 							</div>
 						</div>
@@ -112,30 +75,32 @@ export default function UserProfilePage() {
 						<TabsList className="grid w-full grid-cols-2 bg-white/5 backdrop-blur-md rounded-lg p-1">
 							<TabsTrigger
 								value="upcoming"
-								onClick={() => setActiveTab('upcoming')}
 								className="data-[state=active]:bg-white/10 data-[state=active]:text-white rounded-md transition-all"
 							>
-								Upcoming Events
+								Created Tickets
 							</TabsTrigger>
 							<TabsTrigger
 								value="past"
-								onClick={() => setActiveTab('past')}
 								className="data-[state=active]:bg-white/10 data-[state=active]:text-white rounded-md transition-all"
 							>
-								Past Events
+								Purchased Tickets
 							</TabsTrigger>
 						</TabsList>
 						<TabsContent value="upcoming">
 							<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-								{upcomingEvents.map((event) => (
-									<EventCard key={event.id} event={event} isPast={false} />
+								{userCreatedTicketsData?.map((ticket) => (
+									<EventCard key={ticket.id} event={ticket} isPurchased={false} />
 								))}
 							</div>
 						</TabsContent>
 						<TabsContent value="past">
 							<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-								{pastEvents.map((event) => (
-									<EventCard key={event.id} event={event} isPast={true} />
+								{userBoughtOrdersData?.map((order) => (
+									<EventCard
+										key={order.id}
+										event={order.ticket}
+										isPurchased={true}
+									/>
 								))}
 							</div>
 						</TabsContent>
@@ -146,28 +111,31 @@ export default function UserProfilePage() {
 	)
 }
 
-function EventCard({ event, isPast }) {
+function EventCard({ event, isPurchased }) {
 	return (
 		<Card className="bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors">
 			<CardContent className="p-4">
 				<div className="flex flex-col h-full">
 					<div>
 						<h3 className="text-lg font-semibold text-white mb-2">
-							{event.name}
+							{event.title}
 						</h3>
 						<div className="flex items-center space-x-2 text-sm text-gray-400 mb-1">
 							<CalendarIcon className="w-4 h-4 flex-shrink-0" />
 							<span>
-								{new Date(event.date).toLocaleDateString('en-US', {
-									year: 'numeric',
-									month: 'long',
-									day: 'numeric',
-								})}
+								{new Date(event.expiresAt || event.date).toLocaleDateString(
+									'en-US',
+									{
+										year: 'numeric',
+										month: 'long',
+										day: 'numeric',
+									}
+								)}
 							</span>
 						</div>
 						<div className="flex items-center space-x-2 text-sm text-gray-400 mb-4">
 							<MapPinIcon className="w-4 h-4 flex-shrink-0" />
-							<span>{event.venue}</span>
+							<span>{event.venue || 'N/A'}</span>
 						</div>
 					</div>
 					<div className="mt-auto flex items-center justify-between">
@@ -175,9 +143,9 @@ function EventCard({ event, isPast }) {
 							variant="secondary"
 							className="bg-white/10 text-white backdrop-blur-sm"
 						>
-							{event.ticketType}
+							${event.price}
 						</Badge>
-						{isPast ? (
+						{isPurchased ? (
 							<Button
 								variant="outline"
 								size="sm"

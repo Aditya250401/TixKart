@@ -1,7 +1,7 @@
 'use client'
 import SignInForm from '@/components/forms/sign-in-form'
 import Image from 'next/image'
-import Link from 'next/link'
+
 
 const Page = () => {
 	return (
@@ -22,9 +22,7 @@ const Page = () => {
 						<p className="justify-items-end text-dark-600 xl:text-left">
 							© 2024 Cosmix
 						</p>
-						<Link href="/?admin=true" className="text-green-500">
-							Admin
-						</Link>
+						
 					</div>
 				</div>
 			</section>

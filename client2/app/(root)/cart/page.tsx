@@ -1,45 +1,42 @@
 'use client'
 
-import { useState } from 'react'
 import Image from 'next/image'
-import { Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react'
-
+import { ShoppingCart, Trash2 } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-
-interface CartItem {
-	id: number
-	name: string
-	price: number
-	quantity: number
-}
+import { useGetOrdersQuery, useDeleteOrderMutation } from '@/lib/redux/store'
 
 export default function Component() {
-	const [cartItems, setCartItems] = useState<CartItem[]>([
-		{ id: 1, name: 'Cosmic Harmony Ticket - VIP', price: 129.99, quantity: 2 },
-		{ id: 2, name: 'Event T-Shirt', price: 24.99, quantity: 1 },
-	])
+	const { data: orders, error, isLoading } = useGetOrdersQuery()
+	const [deleteOrder] = useDeleteOrderMutation()
 
-	const updateQuantity = (id: number, newQuantity: number) => {
-		setCartItems(
-			cartItems
-				.map((item) =>
-					item.id === id
-						? { ...item, quantity: Math.max(0, newQuantity) }
-						: item
-				)
-				.filter((item) => item.quantity > 0)
-		)
+	const { toast } = useToast()
+
+	// Function to handle delete
+	const handleDelete = async (orderId: string) => {
+		try {
+			await deleteOrder(orderId).unwrap()
+			toast({
+				title: 'Order deleted',
+				description: 'Order has been removed from your cart',
+				variant: 'success',
+			})
+		} catch (err) {
+			console.error('Failed to delete order', err)
+		}
 	}
 
-	const subtotal = cartItems.reduce(
-		(sum, item) => sum + item.price * item.quantity,
-		0
-	)
+	// Calculating subtotal, tax, and total
+	const subtotal =
+		orders?.reduce((sum, order) => sum + order.ticket.price, 0) || 0
 	const serviceFee = 20.0
-	const tax = subtotal * 0.1 // Assuming 10% tax
+	const tax = subtotal * 0.1
 	const total = subtotal + serviceFee + tax
+
+	if (isLoading) return <p>Loading...</p>
+	if (error) return <p>Error loading orders</p>
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-gray-100 flex flex-col items-center justify-start p-4 relative overflow-hidden">
@@ -69,45 +66,32 @@ export default function Component() {
 				</CardHeader>
 				<CardContent>
 					<div className="space-y-6">
-						{cartItems.map((item) => (
-							<div key={item.id} className="flex items-center justify-between">
-								<div className="flex-1">
-									<h3 className="text-lg font-semibold text-gray-200">
-										{item.name}
-									</h3>
-									<p className="text-sm text-gray-400">
-										${item.price.toFixed(2)} each
-									</p>
+						{orders &&
+							orders.map((order) => (
+								<div
+									key={order.id}
+									className="flex items-center justify-between"
+								>
+									<div className="flex-1">
+										<h3 className="text-lg font-semibold text-gray-200">
+											{order.ticket.title}
+										</h3>
+										<p className="text-sm text-gray-400">
+											${order.ticket.price.toFixed(2)} each
+										</p>
+									</div>
+									<div className="flex items-center space-x-2">
+										<Button
+											variant="ghost"
+											size="icon"
+											onClick={() => handleDelete(order.id)}
+											className="h-8 w-8 text-gray-400 hover:text-red-400 hover:bg-transparent"
+										>
+											<Trash2 className="h-4 w-4" />
+										</Button>
+									</div>
 								</div>
-								<div className="flex items-center space-x-2">
-									<Button
-										variant="outline"
-										size="icon"
-										onClick={() => updateQuantity(item.id, item.quantity - 1)}
-										className="h-8 w-8 rounded-full bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600"
-									>
-										<Minus className="h-4 w-4" />
-									</Button>
-									<span className="w-8 text-center">{item.quantity}</span>
-									<Button
-										variant="outline"
-										size="icon"
-										onClick={() => updateQuantity(item.id, item.quantity + 1)}
-										className="h-8 w-8 rounded-full bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600"
-									>
-										<Plus className="h-4 w-4" />
-									</Button>
-									<Button
-										variant="ghost"
-										size="icon"
-										onClick={() => updateQuantity(item.id, 0)}
-										className="h-8 w-8 text-gray-400 hover:text-red-400 hover:bg-transparent"
-									>
-										<Trash2 className="h-4 w-4" />
-									</Button>
-								</div>
-							</div>
-						))}
+							))}
 					</div>
 					<Separator className="my-6 bg-gray-700" />
 					<div className="space-y-4">

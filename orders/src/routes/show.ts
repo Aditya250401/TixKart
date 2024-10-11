@@ -8,6 +8,15 @@ import { Order } from '../models/order'
 
 const router = express.Router()
 
+router.get('/api/orders', requireAuth, async (req: Request, res: Response) => {
+	const orders = await Order.find({
+		userId: req.currentUser!.id,
+		expiresAt: { $gt: new Date() }, // Filter to find orders where expiresAt is greater than the current date
+	}).populate('ticket')
+
+	res.send(orders)
+})
+
 router.get(
 	'/api/orders/:orderId',
 	requireAuth,

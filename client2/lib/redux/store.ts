@@ -6,16 +6,17 @@ import appStateReducer from './appSlice'
 
 import { authApi } from './features/auth/authApi'
 import { ticketApi } from './features/tickets/ticketApi'
-
+import { orderApi } from './features/orders/orderApi'
 // Create the Redux store
 export const store = configureStore({
 	reducer: {
 		[authApi.reducerPath]: authApi.reducer,
 		[ticketApi.reducerPath]: ticketApi.reducer,
+		[orderApi.reducerPath]: orderApi.reducer,
 		appState: appStateReducer,
 	}, // Add your reducers here
 	middleware: (getDefaultMiddleware) =>
-		getDefaultMiddleware().concat(authApi.middleware, ticketApi.middleware),
+		getDefaultMiddleware().concat(authApi.middleware, ticketApi.middleware, orderApi.middleware),
 })
 
 // Setup listeners for refetch behaviors
@@ -33,7 +34,19 @@ export {
 	useGetTicketByIdQuery,
 	useCreateTicketMutation,
 	useUpdateTicketMutation,
+	useGetUserTicketsQuery,
 } from './features/tickets/ticketApi'
+
+export {
+	useGetOrdersQuery,
+	useGetOrderByIdQuery,
+	useCreateOrderMutation,
+	useCancelOrderMutation,
+	useDeleteOrderMutation,
+	useGetCompletedOrdersQuery,
+} from './features/orders/orderApi'
+
+
 // Define RootState and AppDispatch types
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
