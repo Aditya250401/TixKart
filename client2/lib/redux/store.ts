@@ -7,16 +7,23 @@ import appStateReducer from './appSlice'
 import { authApi } from './features/auth/authApi'
 import { ticketApi } from './features/tickets/ticketApi'
 import { orderApi } from './features/orders/orderApi'
+import { paymentApi } from './features/payments/paymentApi'
 // Create the Redux store
 export const store = configureStore({
 	reducer: {
 		[authApi.reducerPath]: authApi.reducer,
 		[ticketApi.reducerPath]: ticketApi.reducer,
 		[orderApi.reducerPath]: orderApi.reducer,
+		[paymentApi.reducerPath]: paymentApi.reducer,
 		appState: appStateReducer,
 	}, // Add your reducers here
 	middleware: (getDefaultMiddleware) =>
-		getDefaultMiddleware().concat(authApi.middleware, ticketApi.middleware, orderApi.middleware),
+		getDefaultMiddleware().concat(
+			authApi.middleware,
+			ticketApi.middleware,
+			orderApi.middleware,
+			paymentApi.middleware
+		),
 })
 
 // Setup listeners for refetch behaviors
@@ -46,6 +53,10 @@ export {
 	useGetCompletedOrdersQuery,
 } from './features/orders/orderApi'
 
+export {
+	useCreatePaymentOrderMutation,
+	useVerifyPaymentMutation,
+} from './features/payments/paymentApi'
 
 // Define RootState and AppDispatch types
 export type RootState = ReturnType<typeof store.getState>

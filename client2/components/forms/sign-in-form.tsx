@@ -54,7 +54,7 @@ export default function SignInForm() {
 			dispatch(setCredentials({ user: results.data }))
 			redirect('/')
 		}
-		console.log('these are results', results)
+
 		if (results.isError) {
 			toast({
 				title: 'login failed',

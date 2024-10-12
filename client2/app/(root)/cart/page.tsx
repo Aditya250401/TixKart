@@ -6,27 +6,108 @@ import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { useGetOrdersQuery, useDeleteOrderMutation } from '@/lib/redux/store'
+import {
+	useGetOrdersQuery,
+	useCreatePaymentOrderMutation,
+	useVerifyPaymentMutation,
+} from '@/lib/redux/store'
+import { useState, useEffect } from 'react'
+import Router from 'next/router'
 
 export default function Component() {
 	const { data: orders, error, isLoading } = useGetOrdersQuery()
-	const [deleteOrder] = useDeleteOrderMutation()
+    const orderIds = orders?.map((order) => order.id)
 
-	const { toast } = useToast()
 
-	// Function to handle delete
-	const handleDelete = async (orderId: string) => {
+	const [createPaymentOrder] = useCreatePaymentOrderMutation()
+	const [verifyPayment] = useVerifyPaymentMutation()
+	const [showRazorpay, setShowRazorpay] = useState(false)
+	const [orderDetails, setOrderDetails] = useState({
+		orderId: null,
+		currency: 'INR',
+		amount: 0,
+	})
+
+	// Razorpay script loader
+	const loadScript = (src) =>
+		new Promise((resolve) => {
+			const script = document.createElement('script')
+			script.src = src
+			script.onload = () => resolve(true)
+			script.onerror = () => resolve(false)
+			document.body.appendChild(script)
+		})
+
+	// Function to initialize Razorpay
+	const initializeRazorpay = async () => {
+		const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js')
+		if (!res) {
+			console.log('Razorpay SDK failed to load. Are you online?')
+			return
+		}
+
+		const options = {
+			key: 'rzp_test_QBoToAm2STGvXC', // Use your Razorpay key
+			amount: orderDetails.amount, // Amount in paise
+			currency: orderDetails.currency,
+			name: 'Your Business Name',
+			description: 'Payment for your order',
+			order_id: orderDetails.orderId, // Razorpay Order ID
+			handler: async function (response) {
+				const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
+					response
+				try {
+					await verifyPayment({
+						orderIds,
+						paymentId: razorpay_payment_id,
+						signature: razorpay_signature,
+						razorpay_order_id,
+					}).unwrap()
+					alert('Payment Successful!')
+					Router.push('/orders')
+				} catch (error) {
+					console.error('Payment verification failed:', error)
+					alert('Payment verification failed.')
+				}
+			},
+			prefill: {
+				name: 'Your Name',
+				email: 'your-email@example.com',
+				contact: '8918060957',
+			},
+			theme: {
+				color: '#3399cc',
+			},
+		}
+
+		const rzp1 = new window.Razorpay(options)
+		rzp1.open() // Open Razorpay payment window
+	}
+
+	// Function to create Razorpay order
+	const handleCreateOrder = async () => {
 		try {
-			await deleteOrder(orderId).unwrap()
-			toast({
-				title: 'Order deleted',
-				description: 'Order has been removed from your cart',
-				variant: 'success',
+			const { data } = await createPaymentOrder({ orderIds })
+
+			setOrderDetails({
+				orderId: data.razorpayOrderId,
+				currency: 'INR',
+				amount: data.amount,
 			})
-		} catch (err) {
-			console.error('Failed to delete order', err)
+			setShowRazorpay(true)
+		} catch (error) {
+			console.error('Failed to create order:', error)
 		}
 	}
+
+	// Trigger Razorpay when ready
+	useEffect(() => {
+		if (showRazorpay) {
+			initializeRazorpay()
+		}
+	}, [showRazorpay])
+
+	// UI rendering remains same as before
 
 	// Calculating subtotal, tax, and total
 	const subtotal =
@@ -117,6 +198,7 @@ export default function Component() {
 						<Button
 							className="w-full bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white text-lg py-6 rounded-full transition-all duration-300 transform hover:scale-105"
 							size="lg"
+							onClick={handleCreateOrder} // Trigger order creation and payment
 						>
 							Proceed to Checkout
 						</Button>

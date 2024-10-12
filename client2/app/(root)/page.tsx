@@ -20,9 +20,9 @@ const categories = [
 
 export default function LandingPage() {
 	const router = useRouter()
-	const { data: userData } = useGetUserQuery()
+	const { data: userData, isLoading: userLoading } = useGetUserQuery()
 	const dispatch = useDispatch()
-	const { data: ticketsData } = useGetTicketsQuery()
+	const { data: ticketsData, isLoading: ticketsLoading } = useGetTicketsQuery()
 
 	// Set user credentials if available
 	useEffect(() => {
@@ -35,12 +35,18 @@ export default function LandingPage() {
 
 	// Handle redirect inside useEffect
 	useEffect(() => {
-		if (!user) {
+		// Wait until the userData is no longer loading before deciding on redirect
+		if (!userLoading && !userData?.currentUser) {
 			router.push(`/auth/signin`)
 		}
-	}, [user, router])
+	}, [user, userLoading, userData, router])
 
 	// Conditional render if user is not yet defined
+	if (userLoading) {
+		// While user data is loading, display a loading indicator or message
+		return <p>Loading...</p>
+	}
+
 	if (!user) {
 		return (
 			<div role="status">
@@ -84,7 +90,7 @@ export default function LandingPage() {
 				<section>
 					<h2 className="text-2xl font-semibold mb-4">Trending Events</h2>
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-						{(!ticketsData || ticketsData.length === 0) && (
+						{ticketsLoading || !ticketsData || ticketsData.length === 0 ? (
 							<div className="w-full">
 								<h2 className="text-center text-lg text-gray-400">
 									No tickets right now
@@ -97,16 +103,15 @@ export default function LandingPage() {
 									</Link>
 								</p>
 							</div>
-						)}
-
-						{ticketsData &&
-							ticketsData.map((event) => (
+						) : (
+							ticketsData?.map((event) => (
 								<EventTicketCard
 									key={event.id}
 									title={event.title}
 									id={event.id}
 								/>
-							))}
+							))
+						)}
 					</div>
 				</section>
 			</main>

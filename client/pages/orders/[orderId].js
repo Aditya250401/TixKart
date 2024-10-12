@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Router from 'next/router'
 
-const OrderShow = ({ order, currentUser }) => {
-	const [timeLeft, setTimeLeft] = useState(0)
+const OrderShow = () => {
+
 	const [showRazorpay, setShowRazorpay] = useState(false)
 	const [orderDetails, setOrderDetails] = useState({
 		orderId: null,
@@ -11,23 +11,9 @@ const OrderShow = ({ order, currentUser }) => {
 		amount: 0,
 	})
 
-	useEffect(() => {
-		const findTimeLeft = () => {
-			const msLeft = new Date(order.expiresAt) - new Date()
-			setTimeLeft(Math.round(msLeft / 1000))
-		}
-
-		findTimeLeft()
-		const timerId = setInterval(findTimeLeft, 1000)
-
-		return () => {
-			clearInterval(timerId)
-		}
-	}, [order])
-
 	const handleCreateOrder = async () => {
 		try {
-			const { data } = await axios.post('/api/payments', { orderId: order.id })
+			const { data } = await axios.post('/api/payments/orders')
 			console.log('data mil gaya', data)
 			setOrderDetails({
 				orderId: data.razorpayOrderId,
@@ -57,7 +43,7 @@ const OrderShow = ({ order, currentUser }) => {
 		}
 
 		const options = {
-			key: 'rzp_test_XKTJYBPsUb9pgK', // Use your Razorpay key
+			key: 'rzp_test_QBoToAm2STGvXC', // Use your Razorpay key
 			amount: orderDetails.amount, // Amount in paise (100 INR = 10000 paise)
 			currency: orderDetails.currency,
 			name: 'Your Business Name',
@@ -100,22 +86,13 @@ const OrderShow = ({ order, currentUser }) => {
 		}
 	}, [showRazorpay])
 
-	if (timeLeft < 0) {
-		return <div>Order Expired</div>
-	}
 
 	return (
 		<div>
-			<p>Time left to pay remaining amount: {timeLeft} seconds</p>
 			<button onClick={handleCreateOrder}>Pay with Razorpay</button>
 		</div>
 	)
 }
 
-OrderShow.getInitialProps = async (context, client) => {
-	const { orderId } = context.query
-	const { data } = await client.get(`/api/orders/${orderId}`)
-	return { order: data }
-}
 
 export default OrderShow

@@ -47,7 +47,7 @@ export default function TicketCreateForm() {
 			})
 			redirect('/')
 		}
-		console.log('these are results', results)
+
 		if (results.isError) {
 			toast({
 				title: 'ticket creation failed',

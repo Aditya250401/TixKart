@@ -51,7 +51,7 @@ export default function Component({ params }: PostShowPageProps) {
 
 			redirect('/cart')
 		}
-		console.log('these are order created', results)
+
 		if (results.isError) {
 			toast({
 				title: 'order creation failed',

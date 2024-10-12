@@ -14,73 +14,96 @@ import Razorpay from 'razorpay'
 const router = express.Router()
 
 const razorpay = new Razorpay({
-	key_id: 'rzp_test_XKTJYBPsUb9pgK',
+	key_id: 'rzp_test_QBoToAm2STGvXC',
 	key_secret: process.env.RAZORPAY_SECRET,
 })
 
-router.post(
-	'/api/payments',
-	requireAuth,
-	[body('orderId').not().isEmpty()],
-	validateRequest,
-	async (req: Request, res: Response) => {
-		const { orderId } = req.body
+// router.post(
+// 	'/api/payments',
+// 	requireAuth,
+// 	[body('orderId').not().isEmpty()],
+// 	validateRequest,
+// 	async (req: Request, res: Response) => {
+// 		const { orderId } = req.body
 
-		const order = await Order.findById(orderId)
+// 		const order = await Order.findById(orderId)
 
+// 		if (!order) {
+// 			throw new NotFoundError()
+// 		}
 
+// 		if (order.userId !== req.currentUser!.id) {
+// 			throw new NotAuthorizedError()
+// 		}
 
-		if (!order) {
-			throw new NotFoundError()
-		}
+// 		if (order.status === OrderStatus.Cancelled) {
+// 			throw new BadRequestError('Cannot pay for a cancelled order try again')
+// 		}
 
-		if (order.userId !== req.currentUser!.id) {
-			throw new NotAuthorizedError()
-		}
+// 		const amount = order.price * 100 // Amount in paise
 
-		if (order.status === OrderStatus.Cancelled) {
-			throw new BadRequestError('Cannot pay for a cancelled order try again')
-		}
+// 		const receiptId = `receipt_${order.id}`
 
-		const amount = order.price * 100 // Amount in paise
+// 		const paymentOrder = await razorpay.orders.create({
+// 			amount,
+// 			currency: 'INR',
+// 			receipt: receiptId,
+// 		})
 
-		const receiptId = `receipt_${order.id}`
+// 		res.status(201).send({
+// 			amount,
+// 			razorpayOrderId: paymentOrder.id,
+// 		})
+// 	}
+// )
 
-		const paymentOrder = await razorpay.orders.create({
-			amount,
-			currency: 'INR',
-			receipt: receiptId,
-		})
+router.post('/api/payments', async (req: Request, res: Response) => {
+	const { orderIds } = req.body
 
+	// Find all orders belonging to the current user and are not cancelled
+	const orders = await Order.find({
+		_id: { $in: orderIds },
+		userId: req.currentUser!.id,
+		status: { $ne: OrderStatus.Cancelled },
+	})
 
-		res.status(201).send({
-			amount,
-			razorpayOrderId: paymentOrder.id,
-		})
+	if (orders.length === 0) {
+		throw new NotFoundError()
 	}
-)
 
-router.post(
-	'/api/payments/orders',
-	requireAuth,
-	async (req: Request, res: Response) => {
-		const userId = req.currentUser!.id
+	// Calculate the total price for all orders
+	const subtotal = orders.reduce((acc, order) => acc + order.price, 0) * 100
 
-		// Find all orders for the user
-		const orders = await Order.find({ userId })
+	const serviceFee = 20.0
+	const tax = subtotal * 0.1
+	const totalAmount = subtotal + serviceFee + tax // Amount in paise
 
-		if (!orders || orders.length === 0) {
-			throw new NotFoundError()
+	const generateRandomString = (length: number) => {
+		const characters =
+			'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+		let result = ''
+		const charactersLength = characters.length
+		for (let i = 0; i < length; i++) {
+			result += characters.charAt(Math.floor(Math.random() * charactersLength))
 		}
-
-		// Calculate total amount for all orders
-		const totalAmount = orders.reduce((acc, order) => acc + order.price, 0)
-
-		res.status(200).send({
-			orders,
-			totalAmount,
-		})
+		return result
 	}
-)
+
+	const randomString = generateRandomString(20)
+	// Create a single Razorpay order for the total amount
+	const receiptId = `receipt_${randomString}`
+
+	const paymentOrder = await razorpay.orders.create({
+		amount: totalAmount,
+		currency: 'INR',
+		receipt: receiptId,
+	})
+
+	res.status(201).send({
+		amount: totalAmount,
+		currency: 'INR',
+		razorpayOrderId: paymentOrder.id,
+	})
+})
 
 export { router as createChargeRouter }
