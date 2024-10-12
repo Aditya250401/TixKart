@@ -10,12 +10,15 @@ import {
 	useGetOrdersQuery,
 	useCreatePaymentOrderMutation,
 	useVerifyPaymentMutation,
+	useDeleteOrderMutation,
 } from '@/lib/redux/store'
 import { useState, useEffect } from 'react'
 import Router from 'next/router'
 
 export default function Component() {
+
 	const { data: orders, error, isLoading } = useGetOrdersQuery()
+	const [deleteOrder] = useDeleteOrderMutation()
     const orderIds = orders?.map((order) => order.id)
 
 
@@ -67,12 +70,12 @@ export default function Component() {
 					Router.push('/orders')
 				} catch (error) {
 					console.error('Payment verification failed:', error)
-					alert('Payment verification failed.')
+
 				}
 			},
 			prefill: {
-				name: 'Your Name',
-				email: 'your-email@example.com',
+				name: 'XXX',
+				email: 'XX@XX.com',
 				contact: '8918060957',
 			},
 			theme: {
@@ -99,6 +102,15 @@ export default function Component() {
 			console.error('Failed to create order:', error)
 		}
 	}
+
+	const handleDelete = async (orderId) => {
+		try {
+			await deleteOrder(orderId).unwrap()
+		} catch (error) {
+			console.error('Failed to delete order:', error)
+		}
+	}
+	
 
 	// Trigger Razorpay when ready
 	useEffect(() => {

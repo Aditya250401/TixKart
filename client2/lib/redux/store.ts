@@ -42,6 +42,7 @@ export {
 	useCreateTicketMutation,
 	useUpdateTicketMutation,
 	useGetUserTicketsQuery,
+	useDeleteTicketMutation
 } from './features/tickets/ticketApi'
 
 export {

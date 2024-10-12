@@ -13,8 +13,6 @@ router.get('/api/orders', requireAuth, async (req: Request, res: Response) => {
 		},
 	}).populate('ticket')
 
-	console.log('Orders:', orders)
-
 	res.send(orders)
 })
 
@@ -30,7 +28,7 @@ router.get(
 			}, // Fetch only 'completed' orders
 		}).populate('ticket')
 
-		console.log('Orders:', orders)
+
 
 		res.send(orders)
 	}

@@ -57,4 +57,28 @@ router.put(
 	}
 )
 
+router.delete(
+	'/api/tickets/:id',
+	requireAuth,
+	async (req: Request, res: Response) => {
+		const ticket = await Ticket.findById(req.params.id)
+
+		if (!ticket) {
+			throw new NotFoundError()
+		}
+
+		if (ticket.userId !== req.currentUser!.id) {
+			throw new NotAuthorizedError()
+		}
+
+		if (ticket.orderId) {
+			throw new BadRequestError('ticket is reserved')
+		}
+
+		await ticket.deleteOne()
+
+		res.send(ticket)
+	}
+)
+
 export { router as updateTicketRouter }

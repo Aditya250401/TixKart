@@ -12,5 +12,5 @@ export const UserLoginValidation = z.object({
 
 export const TicketCreate = z.object({
 	title: z.string().min(3, 'ticket title is required'),
-	price: z.number(),
+	price: z.number().max(1000, 'price cannot be more than $1000'),
 })

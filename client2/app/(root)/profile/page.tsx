@@ -5,12 +5,14 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { CalendarIcon, MapPinIcon, TicketIcon, StarIcon } from 'lucide-react'
+import { CalendarIcon, MapPinIcon, Trash2 } from 'lucide-react'
 import {
 	useGetCompletedOrdersQuery,
 	useGetUserTicketsQuery,
 	useGetUserQuery,
+	useDeleteTicketMutation,
 } from '@/lib/redux/store'
+import { useToast } from '@/hooks/use-toast'
 
 export default function UserProfilePage() {
 	const { data: mainUser } = useGetUserQuery()
@@ -89,7 +91,11 @@ export default function UserProfilePage() {
 						<TabsContent value="upcoming">
 							<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 								{userCreatedTicketsData?.map((ticket) => (
-									<EventCard key={ticket.id} event={ticket} isPurchased={false} />
+									<EventCard
+										key={ticket.id}
+										event={ticket}
+										isPurchased={false}
+									/>
 								))}
 							</div>
 						</TabsContent>
@@ -112,6 +118,21 @@ export default function UserProfilePage() {
 }
 
 function EventCard({ event, isPurchased }) {
+	const {toast} = useToast()
+	const [deleteTicket] = useDeleteTicketMutation()
+
+	const handleDeleteTicket = async (id) => {
+		try{
+			await deleteTicket(id)
+		} catch (error) {
+			console.log(error)
+			toast({
+				title: 'Error',
+				description: `Failed to delete ticket:`,
+				variant: 'destructive',
+		})
+
+	}}
 	return (
 		<Card className="bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors">
 			<CardContent className="p-4">
@@ -145,21 +166,14 @@ function EventCard({ event, isPurchased }) {
 						>
 							${event.price}
 						</Badge>
-						{isPurchased ? (
+						{!isPurchased && (
 							<Button
+								onClick={() => handleDeleteTicket(event.id)}
 								variant="outline"
 								size="sm"
-								className="text-black border-white/20 hover:bg-white/10 backdrop-blur-sm"
+								className="text-white border-white/20 hover:bg-white/10 backdrop-blur-sm"
 							>
-								<StarIcon className="w-4 h-4 mr-1 text-black" /> Rate
-							</Button>
-						) : (
-							<Button
-								variant="outline"
-								size="sm"
-								className="text-black font-bold border-white/20 hover:bg-white/10 backdrop-blur-sm"
-							>
-								<TicketIcon className="w-4 h-4 mr-1 text-black" /> View Ticket
+								<Trash2 className="w-4 h-4 mr-1 text-white" /> Delete
 							</Button>
 						)}
 					</div>

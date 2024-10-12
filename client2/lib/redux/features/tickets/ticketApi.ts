@@ -78,6 +78,13 @@ const ticketApi = createApi({
 				}),
 				invalidatesTags: (result, error, { id }) => [{ type: 'Ticket', id }],
 			}),
+			deleteTicket: builder.mutation<Ticket, string>({
+				query: (id) => ({
+					url: `/api/tickets/${id}`,
+					method: 'DELETE',
+				}),
+				invalidatesTags: (result, error, id) => [{ type: 'Ticket', id }],
+			}),
 		}
 	},
 })
@@ -88,6 +95,7 @@ export const {
 	useCreateTicketMutation,
 	useUpdateTicketMutation,
 	useGetUserTicketsQuery,
+	useDeleteTicketMutation,	
 } = ticketApi
 
 export { ticketApi }
