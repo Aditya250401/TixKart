@@ -23,8 +23,6 @@ export default function UserProfilePage() {
 	const { data: userBoughtOrdersData } = useGetCompletedOrdersQuery()
 	const [logout] = useLogoutMutation()
 
-
-
 	const user = {
 		username: '@alexj',
 		bio: 'Event enthusiast | Music lover | Always ready for the next big show',
@@ -66,10 +64,6 @@ export default function UserProfilePage() {
 							</div>
 						</div>
 						<div className="mt-4 md:mt-0 bg-white/5 backdrop-blur-md rounded-lg p-4 text-center">
-							{/* <p className="text-3xl font-bold text-white">
-								{user.eventsAttended}
-							</p>
-							<p className="text-sm text-gray-400">Events Attended</p> */}
 							<Button
 								onClick={() => handleLogout()}
 								variant="outline"
@@ -142,25 +136,27 @@ export default function UserProfilePage() {
 
 function EventCard({ event, isPurchased }) {
 	const { toast } = useToast()
-	const [deleteTicket,isError] = useDeleteTicketMutation()
+	const [deleteTicket, { isError }] = useDeleteTicketMutation()
 
-	const handleDeleteTicket = async (id) => {
-		try {
-			await deleteTicket(id)
-		} catch (error) {
-			console.log(error)
-			
-		}
-	}
-
-	if(isError){
-		toast({
+	// Handle error and show toast if there's an error
+	useEffect(() => {
+		if (isError) {
+			toast({
 				title: 'Error',
-				description: `Failed to delete ticket:`,
+				description: 'Failed to delete ticket',
 				variant: 'destructive',
 			})
 		}
-		
+	}, [isError, toast])
+
+	const handleDeleteTicket = async (id) => {
+		try {
+			await deleteTicket(id).unwrap() // unwrap to handle async properly
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
 	return (
 		<Card className="bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors">
 			<CardContent className="p-4">
