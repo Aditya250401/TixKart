@@ -25,8 +25,10 @@ import { useLoginUserMutation } from '@/lib/redux/store'
 
 import { setCredentials } from '@/lib/redux/appSlice'
 import { useDispatch } from 'react-redux'
+import { useRouter } from 'next/navigation'
 
 export default function SignInForm() {
+	const router = useRouter()
 	const dispatch = useDispatch()
 	const { toast } = useToast()
 
@@ -41,7 +43,12 @@ export default function SignInForm() {
 	const [loginUser, results] = useLoginUserMutation()
 
 	const onSubmit = async (values: z.infer<typeof UserLoginValidation>) => {
-		await loginUser(values).unwrap()
+		try {
+			await loginUser(values).unwrap()
+			router.push('/') // Redirect to the sign-in page
+		} catch (error) {
+			console.log(error)
+		}
 	}
 
 	useEffect(() => {
@@ -115,7 +122,7 @@ export default function SignInForm() {
 					<Button
 						disabled={results.isLoading}
 						type="submit"
-						className="shad-primary-btn w-full"
+						className="bg-white text-black"
 					>
 						Sign-In
 					</Button>

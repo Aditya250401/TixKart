@@ -73,8 +73,7 @@ router.post('/api/payments', async (req: Request, res: Response) => {
 
 	// Calculate the total price for all orders
 	const subtotal = orders.reduce((acc, order) => acc + order.price, 0) * 100
-
-	const serviceFee = 20.0
+	const serviceFee = 2000.0
 	const tax = subtotal * 0.1
 	const totalAmount = subtotal + serviceFee + tax // Amount in paise
 

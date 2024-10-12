@@ -51,13 +51,14 @@ export default function LandingPage() {
 		return (
 			<div role="status">
 				<p className="px-8 text-center text-sm text-muted-foreground">
-					to view your tasks{' '}
+					please {' '}
 					<Link
 						href="/auth/signin"
 						className="underline underline-offset-4 hover:text-primary text-blue-500"
 					>
 						Sign-In
 					</Link>
+					Before
 				</p>
 			</div>
 		)

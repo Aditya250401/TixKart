@@ -1,23 +1,29 @@
 'use client'
-
+import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { CalendarIcon, MapPinIcon, Trash2 } from 'lucide-react'
+import { CalendarIcon, MapPinIcon, Trash2, LogOut } from 'lucide-react'
 import {
 	useGetCompletedOrdersQuery,
 	useGetUserTicketsQuery,
 	useGetUserQuery,
 	useDeleteTicketMutation,
+	useLogoutMutation,
 } from '@/lib/redux/store'
 import { useToast } from '@/hooks/use-toast'
+import { useRouter } from 'next/navigation'
 
 export default function UserProfilePage() {
+	const router = useRouter()
 	const { data: mainUser } = useGetUserQuery()
 	const { data: userCreatedTicketsData } = useGetUserTicketsQuery()
 	const { data: userBoughtOrdersData } = useGetCompletedOrdersQuery()
+	const [logout] = useLogoutMutation()
+
+
 
 	const user = {
 		username: '@alexj',
@@ -26,6 +32,15 @@ export default function UserProfilePage() {
 		memberSince: 'January 2022',
 		eventsAttended: userBoughtOrdersData?.length || 0,
 		avatar: '/placeholder.svg',
+	}
+
+	const handleLogout = async () => {
+		try {
+			await logout().unwrap() // unwrap to handle the async mutation properly
+			router.push('/auth/signin') // Redirect to the sign-in page
+		} catch (error) {
+			console.log(error)
+		}
 	}
 
 	return (
@@ -51,10 +66,18 @@ export default function UserProfilePage() {
 							</div>
 						</div>
 						<div className="mt-4 md:mt-0 bg-white/5 backdrop-blur-md rounded-lg p-4 text-center">
-							<p className="text-3xl font-bold text-white">
+							{/* <p className="text-3xl font-bold text-white">
 								{user.eventsAttended}
 							</p>
-							<p className="text-sm text-gray-400">Events Attended</p>
+							<p className="text-sm text-gray-400">Events Attended</p> */}
+							<Button
+								onClick={() => handleLogout()}
+								variant="outline"
+								size="sm"
+								className="text-white border-white/20 hover:bg-white/10 backdrop-blur-sm"
+							>
+								<LogOut className="w-4 h-4 mr-1 text-white" /> Signout
+							</Button>
 						</div>
 					</div>
 				</CardHeader>
@@ -118,21 +141,26 @@ export default function UserProfilePage() {
 }
 
 function EventCard({ event, isPurchased }) {
-	const {toast} = useToast()
-	const [deleteTicket] = useDeleteTicketMutation()
+	const { toast } = useToast()
+	const [deleteTicket,isError] = useDeleteTicketMutation()
 
 	const handleDeleteTicket = async (id) => {
-		try{
+		try {
 			await deleteTicket(id)
 		} catch (error) {
 			console.log(error)
-			toast({
+			
+		}
+	}
+
+	if(isError){
+		toast({
 				title: 'Error',
 				description: `Failed to delete ticket:`,
 				variant: 'destructive',
-		})
-
-	}}
+			})
+		}
+		
 	return (
 		<Card className="bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors">
 			<CardContent className="p-4">

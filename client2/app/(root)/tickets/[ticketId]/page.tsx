@@ -64,7 +64,7 @@ export default function Component({ params }: PostShowPageProps) {
 	// const [quantity, setQuantity] = useState(1)
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-gray-100 flex flex-col items-center justify-start p-4 relative overflow-hidden">
+		<div className="min-h-screen bg-[#0a0a0a] text-gray-100 flex flex-col items-center justify-start p-4 relative overflow-hidden">
 			<div className="absolute inset-0 z-0">
 				<Image
 					src="/placeholder.svg"
@@ -75,10 +75,10 @@ export default function Component({ params }: PostShowPageProps) {
 				/>
 			</div>
 			<div className="w-full max-w-6xl text-center mb-8 relative z-10">
-				<h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-blue-500">
+				<h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-500">
 					{data?.title}
 				</h1>
-				<p className="text-xl md:text-2xl font-medium text-teal-300">
+				<p className="text-xl md:text-2xl font-medium text-white">
 					Featuring: Stellar Sounds & The Nebula Orchestra
 				</p>
 			</div>
@@ -95,7 +95,7 @@ export default function Component({ params }: PostShowPageProps) {
 							/>
 						</div>
 						<div className="space-y-4">
-							<h2 className="text-3xl font-bold text-teal-300">
+							<h2 className="text-3xl font-bold text-white">
 								Event Description
 							</h2>
 							<p className="text-lg text-gray-300 leading-relaxed">
@@ -108,19 +108,19 @@ export default function Component({ params }: PostShowPageProps) {
 					</div>
 					<div className="flex flex-col space-y-8">
 						<div className="bg-gray-700/50 rounded-lg p-6 space-y-6">
-							<h3 className="text-2xl font-semibold mb-4 text-teal-300">
+							<h3 className="text-2xl font-semibold mb-4 text-white">
 								Event Details
 							</h3>
 							<div className="space-y-4 text-lg">
 								<div className="flex items-center">
-									<Calendar className="mr-4 h-6 w-6 text-teal-400 flex-shrink-0" />
+									<Calendar className="mr-4 h-6 w-6 text-white flex-shrink-0" />
 									<div>
 										<p className="font-medium text-gray-200">Date</p>
 										<p className="text-gray-400">September 15, 2024</p>
 									</div>
 								</div>
 								<div className="flex items-center">
-									<Clock className="mr-4 h-6 w-6 text-teal-400 flex-shrink-0" />
+									<Clock className="mr-4 h-6 w-6 text-white flex-shrink-0" />
 									<div>
 										<p className="font-medium text-gray-200">Time</p>
 										<p className="text-gray-400">
@@ -129,7 +129,7 @@ export default function Component({ params }: PostShowPageProps) {
 									</div>
 								</div>
 								<div className="flex items-center">
-									<MapPin className="mr-4 h-6 w-6 text-teal-400 flex-shrink-0" />
+									<MapPin className="mr-4 h-6 w-6 text-white flex-shrink-0" />
 									<div>
 										<p className="font-medium text-gray-200">Venue</p>
 										<p className="text-gray-400">
@@ -140,7 +140,7 @@ export default function Component({ params }: PostShowPageProps) {
 							</div>
 						</div>
 						<div className="bg-gray-700/50 rounded-lg p-6">
-							<h3 className="text-2xl font-semibold mb-4 text-teal-300">
+							<h3 className="text-2xl font-semibold mb-4 text-white">
 								Ticket Details
 							</h3>
 							<div className="grid grid-cols-3 gap-4 text-center">
@@ -161,8 +161,8 @@ export default function Component({ params }: PostShowPageProps) {
 						<div className="space-y-4">
 							<div className="flex justify-between items-center">
 								<span className="text-xl text-gray-300">Price per ticket</span>
-								<span className="text-2xl font-bold text-teal-300">
-									{data?.price}
+								<span className="text-2xl font-bold text-white">
+									₹{data?.price}
 								</span>
 							</div>
 							<div className="flex items-center justify-between">
@@ -194,12 +194,12 @@ export default function Component({ params }: PostShowPageProps) {
 								<span className="text-2xl font-semibold text-gray-300">
 									Total
 								</span>
-								<span className="text-3xl font-bold text-teal-300">
-									{data?.price}
+								<span className="text-3xl font-bold text-white">
+									₹{data?.price}
 								</span>
 							</div>
 							<Button
-								className="w-full bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white text-lg py-6 rounded-full transition-all duration-300 transform hover:scale-105"
+								className="w-full bg-white hover:bg-white/10 text-black text-lg py-6 rounded-full transition-all duration-300 transform hover:scale-105"
 								size="lg"
 								onClick={handleSubmit}
 							>

@@ -13,14 +13,14 @@ import {
 	useDeleteOrderMutation,
 } from '@/lib/redux/store'
 import { useState, useEffect } from 'react'
-import Router from 'next/router'
+import { useRouter } from 'next/navigation'
 
 export default function Component() {
-
+	const router = useRouter()
+	const { toast } = useToast()
 	const { data: orders, error, isLoading } = useGetOrdersQuery()
 	const [deleteOrder] = useDeleteOrderMutation()
-    const orderIds = orders?.map((order) => order.id)
-
+	const orderIds = orders?.map((order) => order.id)
 
 	const [createPaymentOrder] = useCreatePaymentOrderMutation()
 	const [verifyPayment] = useVerifyPaymentMutation()
@@ -66,11 +66,14 @@ export default function Component() {
 						signature: razorpay_signature,
 						razorpay_order_id,
 					}).unwrap()
-					alert('Payment Successful!')
-					Router.push('/orders')
+					toast({
+						title: 'Payment successful',
+						description: 'Your order is confirmed',
+						variant: 'success',
+					})
+					router.push('/profile')
 				} catch (error) {
 					console.error('Payment verification failed:', error)
-
 				}
 			},
 			prefill: {
@@ -110,7 +113,6 @@ export default function Component() {
 			console.error('Failed to delete order:', error)
 		}
 	}
-	
 
 	// Trigger Razorpay when ready
 	useEffect(() => {
@@ -132,7 +134,7 @@ export default function Component() {
 	if (error) return <p>Error loading orders</p>
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-gray-100 flex flex-col items-center justify-start p-4 relative overflow-hidden">
+		<div className="min-h-screen bg-[#0a0a0a] text-gray-100 flex flex-col items-center justify-start p-4 relative overflow-hidden">
 			<div className="absolute inset-0 z-0">
 				<Image
 					src="/placeholder.svg"
@@ -143,16 +145,16 @@ export default function Component() {
 				/>
 			</div>
 			<div className="w-full max-w-6xl text-center mb-8 relative z-10">
-				<h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-2 bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-blue-500">
-					Your Cosmic Cart
+				<h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-2 bg-clip-text text-white">
+					Your Cart
 				</h1>
-				<p className="text-xl md:text-2xl font-medium text-teal-300">
+				<p className="text-xl md:text-2xl font-medium text-white">
 					Review and confirm your stellar selections
 				</p>
 			</div>
 			<Card className="w-full max-w-4xl bg-gray-800/50 backdrop-blur-md border-gray-700 text-gray-100 shadow-2xl relative z-10">
 				<CardHeader>
-					<CardTitle className="text-2xl font-bold text-teal-300 flex items-center">
+					<CardTitle className="text-2xl font-bold text-white flex items-center">
 						<ShoppingCart className="mr-2" />
 						Shopping Cart
 					</CardTitle>
@@ -190,25 +192,25 @@ export default function Component() {
 					<div className="space-y-4">
 						<div className="flex justify-between text-gray-300">
 							<span>Subtotal</span>
-							<span>${subtotal.toFixed(2)}</span>
+							<span>₹{subtotal.toFixed(2)}</span>
 						</div>
 						<div className="flex justify-between text-gray-300">
 							<span>Service Fee</span>
-							<span>${serviceFee.toFixed(2)}</span>
+							<span>₹{serviceFee.toFixed(2)}</span>
 						</div>
 						<div className="flex justify-between text-gray-300">
 							<span>Estimated Tax</span>
-							<span>${tax.toFixed(2)}</span>
+							<span>₹{tax.toFixed(2)}</span>
 						</div>
 						<Separator className="my-2 bg-gray-700" />
 						<div className="flex justify-between text-lg font-semibold">
 							<span className="text-gray-100">Total</span>
-							<span className="text-teal-300">${total.toFixed(2)}</span>
+							<span className="text-white">₹{total.toFixed(2)}</span>
 						</div>
 					</div>
 					<div className="mt-8">
 						<Button
-							className="w-full bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white text-lg py-6 rounded-full transition-all duration-300 transform hover:scale-105"
+							className="w-full bg-white hover:bg-white/10 text-black text-lg py-6 rounded-full transition-all duration-300 transform hover:scale-105"
 							size="lg"
 							onClick={handleCreateOrder} // Trigger order creation and payment
 						>
