@@ -15,6 +15,11 @@ jobs:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - run: doctl kubernetes cluster kubeconfig save ${{ secrets.DO_CLUSTER_ID }}
       - run: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/do/deploy.yaml
+            # Wait for the ingress-nginx controller to be available
+      - run: kubectl wait --namespace ingress-nginx \
+          --for=condition=ready pod \
+          --selector=app.kubernetes.io/component=controller \
+          --timeout=600s
       - run: kubectl create secret generic jwt-secret --from-literal=JWT_KEY=${{ secrets.JWT_SECRET }}
       - run: kubectl create secret generic razorpay-secret --from-literal=RAZORPAY_SECRET=${{ secrets.RZP_SECRET }}
       - run: kubectl apply -f infra/k8s && kubectl apply -f infra/k8s-prod
