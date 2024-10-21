@@ -1,0 +1,20 @@
+name: deploy-manifests
+
+on:
+  push:
+    branches:
+      - start
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - run: doctl kubernetes cluster kubeconfig save ${{ secrets.DO_CLUSTER_ID }}
+      - run: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.11.2/deploy/static/provider/do/deploy.yaml
+      - run: kubectl create secret generic jwt-secret --from-literal=JWT_KEY=${{ secrets.JWT_SECRET }}
+      - run: kubectl create secret generic razorpay-secret --from-literal=RAZORPAY_SECRET=${{ secrets.RZP_SECRET }}
+      - run: kubectl apply -f infra/k8s && kubectl apply -f infra/k8s-prod

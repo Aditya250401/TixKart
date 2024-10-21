@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { UserValidation } from '@/lib/models/user'
 import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
+import { redirect,useRouter } from 'next/navigation'
 
 import {
 	Form,
@@ -26,6 +26,7 @@ import { setCredentials } from '@/lib/redux/appSlice'
 import { useDispatch } from 'react-redux'
 
 const SignUpForm = () => {
+	const router = useRouter()
 	const dispatch = useDispatch()
 	const { toast } = useToast()
 
@@ -50,7 +51,7 @@ const SignUpForm = () => {
 				variant: 'success',
 			})
 			dispatch(setCredentials({ user: results.data }))
-			redirect('/')
+			router.replace('/') // Redirect to the sign-in page
 		}
 
 		if (results.isError) {

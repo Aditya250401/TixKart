@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { UserLoginValidation } from '@/lib/models/user'
 
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useToast } from '@/hooks/use-toast'
 import {
 	Form,
@@ -25,7 +25,7 @@ import { useLoginUserMutation } from '@/lib/redux/store'
 
 import { setCredentials } from '@/lib/redux/appSlice'
 import { useDispatch } from 'react-redux'
-import { useRouter } from 'next/navigation'
+
 
 export default function SignInForm() {
 	const router = useRouter()
@@ -45,7 +45,6 @@ export default function SignInForm() {
 	const onSubmit = async (values: z.infer<typeof UserLoginValidation>) => {
 		try {
 			await loginUser(values).unwrap()
-			router.push('/') // Redirect to the sign-in page
 		} catch (error) {
 			console.log(error)
 		}
@@ -59,7 +58,7 @@ export default function SignInForm() {
 				variant: 'success',
 			})
 			dispatch(setCredentials({ user: results.data }))
-			redirect('/')
+			router.replace('/') // Redirect to the sign-in page
 		}
 
 		if (results.isError) {
